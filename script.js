@@ -31,6 +31,46 @@
     applyThemeIcon();
   });
 
+  /* ---------- Background music ---------- */
+  const music = document.getElementById('bg-music');
+  const musicBtn = document.querySelector('.nav__music');
+  if (music && musicBtn) {
+    music.volume = 0.45;
+
+    const setPlayingUI = (playing) => {
+      musicBtn.textContent = playing ? '♫' : '♪';
+      musicBtn.setAttribute('aria-pressed', String(playing));
+      musicBtn.setAttribute('aria-label', playing ? 'Pause background music' : 'Play background music');
+    };
+
+    musicBtn.addEventListener('click', () => {
+      if (music.paused) {
+        music.play()
+          .then(() => {
+            setPlayingUI(true);
+            localStorage.setItem('rizal-music', 'on');
+          })
+          .catch(() => setPlayingUI(false));
+      } else {
+        music.pause();
+        setPlayingUI(false);
+        localStorage.setItem('rizal-music', 'off');
+      }
+    });
+
+    // Resume music automatically only after the visitor has already
+    // interacted once (browsers block unsolicited autoplay with sound).
+    if (localStorage.getItem('rizal-music') === 'on') {
+      const resumeOnFirstInteraction = () => {
+        music.play().then(() => setPlayingUI(true)).catch(() => {});
+        document.removeEventListener('click', resumeOnFirstInteraction);
+        document.removeEventListener('keydown', resumeOnFirstInteraction);
+      };
+      document.addEventListener('click', resumeOnFirstInteraction, { once: true });
+      document.addEventListener('keydown', resumeOnFirstInteraction, { once: true });
+    }
+  }
+
   /* ---------- Mobile nav ---------- */
   const burger = document.querySelector('.nav__burger');
   const navLinks = document.querySelector('.nav__links');

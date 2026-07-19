@@ -26,9 +26,14 @@
     <li><a href="#legacy">Legacy</a></li>
     <li><a href="#quiz">Quiz</a></li>
   </ul>
-  <button class="nav__toggle" aria-label="Toggle dark mode">☾</button>
-  <button class="nav__burger" aria-label="Toggle menu">☰</button>
+  <div class="nav__actions">
+    <button class="nav__music" aria-label="Play background music" aria-pressed="false">♪</button>
+    <button class="nav__toggle" aria-label="Toggle dark mode">☾</button>
+    <button class="nav__burger" aria-label="Toggle menu">☰</button>
+  </div>
 </nav>
+
+<audio id="bg-music" src="assets/audio/the-unyielding-dawn.mp3" loop preload="none"></audio>
 
 <header class="hero">
   <div class="hero__rays"></div>
