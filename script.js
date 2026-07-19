@@ -8,6 +8,21 @@
     if (hashTarget) hashTarget.scrollIntoView({ behavior: 'auto', block: 'start' });
   }
 
+  /* ---------- Preloader ---------- */
+  const preloader = document.getElementById('preloader');
+  if (preloader) {
+    let hidden = false;
+    const hidePreloader = () => {
+      if (hidden) return;
+      hidden = true;
+      preloader.classList.add('preloader--hidden');
+      document.body.classList.remove('is-loading');
+      setTimeout(() => preloader.remove(), 700);
+    };
+    window.addEventListener('load', hidePreloader);
+    setTimeout(hidePreloader, 8000); // safety net if a resource stalls
+  }
+
   /* ---------- Theme toggle ---------- */
   const root = document.documentElement;
   const themeBtn = document.querySelector('.nav__toggle');
