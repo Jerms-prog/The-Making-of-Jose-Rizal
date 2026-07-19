@@ -45,12 +45,8 @@
 
     musicBtn.addEventListener('click', () => {
       if (music.paused) {
-        music.play()
-          .then(() => {
-            setPlayingUI(true);
-            localStorage.setItem('rizal-music', 'on');
-          })
-          .catch(() => setPlayingUI(false));
+        music.play().then(() => setPlayingUI(true)).catch(() => setPlayingUI(false));
+        localStorage.setItem('rizal-music', 'on');
       } else {
         music.pause();
         setPlayingUI(false);
@@ -58,16 +54,24 @@
       }
     });
 
-    // Resume music automatically only after the visitor has already
-    // interacted once (browsers block unsolicited autoplay with sound).
-    if (localStorage.getItem('rizal-music') === 'on') {
-      const resumeOnFirstInteraction = () => {
+    // Browsers block audio-with-sound from starting completely on its own,
+    // so try immediately, and if that's blocked, start on the visitor's
+    // very first interaction with the page (click, key press, or scroll)
+    // rather than requiring them to find and click the music button.
+    if (localStorage.getItem('rizal-music') !== 'off') {
+      const INTERACTION_EVENTS = ['click', 'keydown', 'scroll', 'touchstart'];
+      const startOnFirstInteraction = () => {
         music.play().then(() => setPlayingUI(true)).catch(() => {});
-        document.removeEventListener('click', resumeOnFirstInteraction);
-        document.removeEventListener('keydown', resumeOnFirstInteraction);
+        INTERACTION_EVENTS.forEach(evt => document.removeEventListener(evt, startOnFirstInteraction));
       };
-      document.addEventListener('click', resumeOnFirstInteraction, { once: true });
-      document.addEventListener('keydown', resumeOnFirstInteraction, { once: true });
+
+      music.play()
+        .then(() => setPlayingUI(true))
+        .catch(() => {
+          INTERACTION_EVENTS.forEach(evt =>
+            document.addEventListener(evt, startOnFirstInteraction, { once: true, passive: true })
+          );
+        });
     }
   }
 
