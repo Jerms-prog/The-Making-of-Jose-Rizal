@@ -69,9 +69,9 @@
 
     // Browsers block audio-with-sound from starting completely on its own,
     // so try immediately, and if that's blocked, start on the visitor's
-    // very first interaction with the page (click, key press, scroll, or
-    // touch) anywhere, rather than requiring the music button specifically.
-    const INTERACTION_EVENTS = ['click', 'keydown', 'scroll', 'touchstart'];
+    // first real gesture anywhere on the page (a scroll does NOT count as
+    // a gesture per browser spec, only click/keydown/touchend do).
+    const INTERACTION_EVENTS = ['click', 'keydown', 'touchend'];
     const startOnFirstInteraction = () => {
       music.play().then(() => setPlayingUI(true)).catch(() => {});
       INTERACTION_EVENTS.forEach(evt => document.removeEventListener(evt, startOnFirstInteraction));
